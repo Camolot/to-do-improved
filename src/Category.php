@@ -22,6 +22,20 @@
             $GLOBALS['DB']->exec("INSERT INTO categories (name) VALUES ('{$this->getName()}')");
             $this->id = $GLOBALS['DB']->lastInsertId();
         }
+
+                function getTasks()
+        {
+            $tasks = Array();
+            $returned_tasks = $GLOBALS['DB']->query("SELECT * FROM tasks WHERE category_id = {$this->getId()};");
+            foreach($returned_tasks as $task) {
+                $description = $task['description'];
+                $id = $task['id'];
+                $category_id = $task['category_id'];
+                $new_task = new Task($description, $id, $category_id);
+                array_push($tasks, $new_task);
+            }
+            return $tasks;
+        }
         static function getAll()
         {
             $returned_categories = $GLOBALS['DB']->query("SELECT * FROM categories;");
@@ -34,10 +48,12 @@
             }
             return $categories;
         }
+
         static function deleteAll()
         {
             $GLOBALS['DB']->exec("DELETE FROM categories;");
         }
+        
         static function find($search_id)
         {
             $found_category = null;
